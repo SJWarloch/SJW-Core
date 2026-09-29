@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>SJW Core Login Test</title>
+</head>
+<body>
+
+    <h1>Subversive Joy Works</h1>
+
+    <p id="status">Not logged in.</p>
+
+    <button id="loginBtn">Sign in with Google</button>
+    <button id="logoutBtn" style="display:none;">Sign out</button>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <script>
+        const SUPABASE_URL = "https://ersyehphlrwpdidagqvt.supabase.co";
+        const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_8v5kG8lwO8rsXOp_50wjaA_fcV1PfEh";
+
+        const supabaseClient = window.supabase.createClient(
+            SUPABASE_URL,
+            SUPABASE_PUBLISHABLE_KEY
+        );
+
+        const status = document.getElementById("status");
+        const loginBtn = document.getElementById("loginBtn");
+        const logoutBtn = document.getElementById("logoutBtn");
+
+        async function updatePage() {
+            const { data, error } = await supabaseClient.auth.getSession();
+
+            if (error) {
+                status.textContent = "Error checking session: " + error.message;
+                return;
+            }
+
+            if (data.session) {
+                status.textContent =
+                    "Logged in as: " + data.session.user.email;
+
+                loginBtn.style.display = "none";
+                logoutBtn.style.display = "inline";
+            } else {
+                status.textContent = "Not logged in.";
+
+                loginBtn.style.display = "inline";
+                logoutBtn.style.display = "none";
+            }
+        }
+
+        loginBtn.addEventListener("click", async () => {
+            const { error } =
+                await supabaseClient.auth.signInWithOAuth({
+                    provider: "google"
+                });
+
+            if (error) {
+                status.textContent =
+                    "Login error: " + error.message;
+            }
+        });
+
+        logoutBtn.addEventListener("click", async () => {
+            const { error } =
+                await supabaseClient.auth.signOut();
+
+            if (error) {
+                status.textContent =
+                    "Logout error: " + error.message;
+            }
+
+            await updatePage();
+        });
+
+        supabaseClient.auth.onAuthStateChange(() => {
+            updatePage();
+        });
+
+        updatePage();
+    </script>
+
+</body>
+</html>
