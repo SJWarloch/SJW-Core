@@ -2,263 +2,422 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>SJW Core Login Test</title>
+    <title>SJW Core Account</title>
 </head>
 <body>
 
     <h1>Subversive Joy Works</h1>
 
-    <p id="status">Not logged in.</p>
+    <p id="status">Checking login...</p>
     <p id="credits">Credits: —</p>
 
-<div id="profileSection" style="display:none;">
+    <div id="profileSection" style="display:none;">
 
-    <p>
-        Current username:
-        <strong id="currentUsername">(none)</strong>
-    </p>
+        <p>
+            Current username:
+            <strong id="currentUsername">(none)</strong>
+        </p>
 
-    <p>
-        <label>
-            Choose/change username:
-            <br>
-            <input
-                id="usernameInput"
-                type="text"
-                maxlength="32"
-                placeholder="3-32 letters, numbers, or underscores"
-            >
-        </label>
+        <p>
+            <label>
+                Choose/change username:
+                <br>
+                <input
+                    id="usernameInput"
+                    type="text"
+                    maxlength="32"
+                    placeholder="3-32 letters, numbers, or underscores"
+                >
+            </label>
 
-        <button id="saveUsernameBtn">
-            Save Username
-        </button>
-    </p>
+            <button id="saveUsernameBtn">
+                Save Username
+            </button>
+        </p>
 
-    <p id="usernameResult"></p>
+        <p id="usernameResult"></p>
 
-</div>
+    </div>
 
-    <button id="loginBtn">Sign in with Google</button>
-    <button id="logoutBtn" style="display:none;">Sign out</button>
+    <button id="loginBtn" style="display:none;">
+        Sign in with Google
+    </button>
+
+    <button id="logoutBtn" style="display:none;">
+        Sign out
+    </button>
+
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
     <script>
-        const SUPABASE_URL = "https://ersyehphlrwpdidagqvt.supabase.co";
-        const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_8v5kG8lwO8rsXOp_50wjaA_fcV1PfEh";
 
-        const supabaseClient = window.supabase.createClient(
-            SUPABASE_URL,
-            SUPABASE_PUBLISHABLE_KEY
-        );
+        const SUPABASE_URL =
+            "https://ersyehphlrwpdidagqvt.supabase.co";
 
-        const status = document.getElementById("status");
-        const loginBtn = document.getElementById("loginBtn");
-        const logoutBtn = document.getElementById("logoutBtn");
-        const credits = document.getElementById("credits");
-const profileSection =
-    document.getElementById("profileSection");
+        const SUPABASE_PUBLISHABLE_KEY =
+            "sb_publishable_8v5kG8lwO8rsXOp_50wjaA_fcV1PfEh";
 
-const currentUsername =
-    document.getElementById("currentUsername");
 
-const usernameInput =
-    document.getElementById("usernameInput");
+        const supabaseClient =
+            window.supabase.createClient(
+                SUPABASE_URL,
+                SUPABASE_PUBLISHABLE_KEY
+            );
 
-const saveUsernameBtn =
-    document.getElementById("saveUsernameBtn");
 
-const usernameResult =
-    document.getElementById("usernameResult");
+        const status =
+            document.getElementById("status");
 
-async function updatePage() {
-    const { data, error } = await supabaseClient.auth.getSession();
+        const credits =
+            document.getElementById("credits");
 
-    if (error) {
-        status.textContent = "Error checking session: " + error.message;
-        credits.textContent = "Credits: —";
-        return;
-    }
+        const profileSection =
+            document.getElementById("profileSection");
 
-    if (data.session) {
-        const user = data.session.user;
+        const currentUsername =
+            document.getElementById("currentUsername");
 
-profileSection.style.display = "block";
+        const usernameInput =
+            document.getElementById("usernameInput");
 
-const { data: profile, error: profileError } =
-    await supabaseClient
-        .from("profiles")
-        .select("username, display_name")
-        .eq("id", user.id)
-        .single();
+        const saveUsernameBtn =
+            document.getElementById("saveUsernameBtn");
 
-if (profileError) {
+        const usernameResult =
+            document.getElementById("usernameResult");
 
-    currentUsername.textContent =
-        "Error loading profile";
+        const loginBtn =
+            document.getElementById("loginBtn");
 
-} else {
+        const logoutBtn =
+            document.getElementById("logoutBtn");
 
-    currentUsername.textContent =
-        profile.username ?? "(none)";
 
-    usernameInput.value =
-        profile.username ?? "";
-}
+        async function updatePage() {
 
-        status.textContent =
-            "Logged in as: " + user.email;
+            const { data, error } =
+                await supabaseClient.auth.getSession();
 
-        loginBtn.style.display = "none";
-        logoutBtn.style.display = "inline";
-
-const { data: balance, error: balanceError } =
-    await supabaseClient.rpc("get_my_credit_balance");
-
-if (balanceError) {
-    credits.textContent =
-        "Credits error: " + balanceError.message;
-} else {
-    credits.textContent =
-        "Credits: " + balance;
-}
-
-    } else {
-        status.textContent = "Not logged in.";
-        credits.textContent = "Credits: —";
-
-profileSection.style.display = "none";
-usernameResult.textContent = "";
-
-        loginBtn.style.display = "inline";
-        logoutBtn.style.display = "none";
-    }
-}
-
-        loginBtn.addEventListener("click", async () => {
-            const { error } =
-                await supabaseClient.auth.signInWithOAuth({
-                    provider: "google"
-                });
 
             if (error) {
+
                 status.textContent =
-                    "Login error: " + error.message;
+                    "Error checking session: " +
+                    error.message;
+
+                credits.textContent =
+                    "Credits: —";
+
+                profileSection.style.display =
+                    "none";
+
+                return;
             }
-        });
 
-        logoutBtn.addEventListener("click", async () => {
-            const { error } =
-                await supabaseClient.auth.signOut();
 
-            if (error) {
+            if (data.session) {
+
+                const user =
+                    data.session.user;
+
+
                 status.textContent =
-                    "Logout error: " + error.message;
-            }
+                    "Logged in as: " +
+                    user.email;
 
-            await updatePage();
-        });
+                loginBtn.style.display =
+                    "none";
 
-saveUsernameBtn.addEventListener(
-    "click",
-    async () => {
+                logoutBtn.style.display =
+                    "inline";
 
-        usernameResult.textContent = "";
-
-        const newUsername =
-            usernameInput.value.trim();
+                profileSection.style.display =
+                    "block";
 
 
-        if (
-            newUsername.length < 3 ||
-            newUsername.length > 32
-        ) {
-            usernameResult.textContent =
-                "Username must be between 3 and 32 characters.";
+                // ------------------------------------------------
+                // Load the user's SJW profile.
+                // ------------------------------------------------
 
-            return;
-        }
-
-
-        if (!/^[A-Za-z0-9_]+$/.test(newUsername)) {
-
-            usernameResult.textContent =
-                "Username may contain only letters, numbers, and underscores.";
-
-            return;
-        }
-
-
-        saveUsernameBtn.disabled = true;
+                const {
+                    data: profile,
+                    error: profileError
+                } =
+                    await supabaseClient
+                        .from("profiles")
+                        .select(
+                            "username, display_name"
+                        )
+                        .eq(
+                            "id",
+                            user.id
+                        )
+                        .single();
 
 
-        const { data: sessionData } =
-            await supabaseClient.auth.getSession();
+                if (profileError) {
 
-        const user =
-            sessionData.session?.user;
+                    currentUsername.textContent =
+                        "Error loading profile";
 
+                    usernameInput.value =
+                        "";
 
-        if (!user) {
+                } else {
 
-            usernameResult.textContent =
-                "You are not logged in.";
+                    currentUsername.textContent =
+                        profile.username ??
+                        "(none)";
 
-            saveUsernameBtn.disabled = false;
-
-            return;
-        }
-
-
-        const { data, error } =
-            await supabaseClient
-                .from("profiles")
-                .update({
-                    username: newUsername
-                })
-                .eq("id", user.id)
-                .select("username")
-                .single();
+                    usernameInput.value =
+                        profile.username ??
+                        "";
+                }
 
 
-        if (error) {
+                // ------------------------------------------------
+                // Load the user's current Credit balance.
+                // ------------------------------------------------
 
-            if (error.code === "23505") {
+                const {
+                    data: balance,
+                    error: balanceError
+                } =
+                    await supabaseClient.rpc(
+                        "get_my_credit_balance"
+                    );
 
-                usernameResult.textContent =
-                    "That username is already taken.";
 
-            } else if (error.code === "23514") {
+                if (balanceError) {
 
-                usernameResult.textContent =
-                    "That username is not valid.";
+                    credits.textContent =
+                        "Credits error: " +
+                        balanceError.message;
+
+                } else {
+
+                    credits.textContent =
+                        "Credits: " +
+                        balance;
+                }
 
             } else {
 
+                status.textContent =
+                    "Not logged in.";
+
+                credits.textContent =
+                    "Credits: —";
+
+                currentUsername.textContent =
+                    "(none)";
+
+                usernameInput.value =
+                    "";
+
                 usernameResult.textContent =
-                    "Error: " + error.message;
+                    "";
+
+                profileSection.style.display =
+                    "none";
+
+                loginBtn.style.display =
+                    "inline";
+
+                logoutBtn.style.display =
+                    "none";
             }
-
-        } else {
-
-            currentUsername.textContent =
-                data.username;
-
-            usernameResult.textContent =
-                "Username saved.";
         }
 
 
-        saveUsernameBtn.disabled = false;
-    }
-);
+        loginBtn.addEventListener(
+            "click",
+            async () => {
 
-        supabaseClient.auth.onAuthStateChange(() => {
-            updatePage();
-        });
+                const { error } =
+                    await supabaseClient.auth
+                        .signInWithOAuth({
+                            provider: "google"
+                        });
+
+
+                if (error) {
+
+                    status.textContent =
+                        "Login error: " +
+                        error.message;
+                }
+            }
+        );
+
+
+        logoutBtn.addEventListener(
+            "click",
+            async () => {
+
+                const { error } =
+                    await supabaseClient.auth
+                        .signOut();
+
+
+                if (error) {
+
+                    status.textContent =
+                        "Logout error: " +
+                        error.message;
+                }
+
+
+                await updatePage();
+            }
+        );
+
+
+        saveUsernameBtn.addEventListener(
+            "click",
+            async () => {
+
+                usernameResult.textContent =
+                    "";
+
+
+                const newUsername =
+                    usernameInput.value.trim();
+
+
+                // ------------------------------------------------
+                // Client-side username validation.
+                //
+                // PostgreSQL independently enforces the same
+                // rules, so this is primarily friendly feedback.
+                // ------------------------------------------------
+
+                if (
+                    newUsername.length < 3 ||
+                    newUsername.length > 32
+                ) {
+
+                    usernameResult.textContent =
+                        "Username must be between 3 and 32 characters.";
+
+                    return;
+                }
+
+
+                if (
+                    !/^[A-Za-z0-9_]+$/.test(
+                        newUsername
+                    )
+                ) {
+
+                    usernameResult.textContent =
+                        "Username may contain only letters, numbers, and underscores.";
+
+                    return;
+                }
+
+
+                saveUsernameBtn.disabled =
+                    true;
+
+
+                const { data: sessionData } =
+                    await supabaseClient.auth
+                        .getSession();
+
+
+                const user =
+                    sessionData.session?.user;
+
+
+                if (!user) {
+
+                    usernameResult.textContent =
+                        "You are not logged in.";
+
+                    saveUsernameBtn.disabled =
+                        false;
+
+                    return;
+                }
+
+
+                // ------------------------------------------------
+                // Update this user's own profile.
+                //
+                // RLS prevents the caller from updating somebody
+                // else's profile.
+                // ------------------------------------------------
+
+                const { data, error } =
+                    await supabaseClient
+                        .from("profiles")
+                        .update({
+                            username: newUsername
+                        })
+                        .eq(
+                            "id",
+                            user.id
+                        )
+                        .select(
+                            "username"
+                        )
+                        .single();
+
+
+                if (error) {
+
+                    // PostgreSQL unique violation:
+                    // another user already owns this username.
+
+                    if (error.code === "23505") {
+
+                        usernameResult.textContent =
+                            "That username is already taken.";
+
+                    // PostgreSQL CHECK constraint violation:
+                    // username failed database validation.
+
+                    } else if (
+                        error.code === "23514"
+                    ) {
+
+                        usernameResult.textContent =
+                            "That username is not valid.";
+
+                    } else {
+
+                        usernameResult.textContent =
+                            "Error: " +
+                            error.message;
+                    }
+
+                } else {
+
+                    currentUsername.textContent =
+                        data.username;
+
+                    usernameResult.textContent =
+                        "Username saved.";
+                }
+
+
+                saveUsernameBtn.disabled =
+                    false;
+            }
+        );
+
+
+        supabaseClient.auth.onAuthStateChange(
+            () => {
+                updatePage();
+            }
+        );
+
 
         updatePage();
+
     </script>
 
 </body>
