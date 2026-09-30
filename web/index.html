@@ -48,23 +48,16 @@ async function updatePage() {
         loginBtn.style.display = "none";
         logoutBtn.style.display = "inline";
 
-        const { data: ledgerEntries, error: ledgerError } =
-            await supabaseClient
-                .from("credit_ledger")
-                .select("amount")
-                .eq("user_id", user.id);
+const { data: balance, error: balanceError } =
+    await supabaseClient.rpc("get_my_credit_balance");
 
-        if (ledgerError) {
-            credits.textContent =
-                "Credits error: " + ledgerError.message;
-        } else {
-            const balance = ledgerEntries.reduce(
-                (total, entry) => total + Number(entry.amount),
-                0
-            );
-
-            credits.textContent = "Credits: " + balance;
-        }
+if (balanceError) {
+    credits.textContent =
+        "Credits error: " + balanceError.message;
+} else {
+    credits.textContent =
+        "Credits: " + balance;
+}
 
     } else {
         status.textContent = "Not logged in.";
