@@ -9,6 +9,7 @@
     <h1>Subversive Joy Works</h1>
 
     <p id="status">Not logged in.</p>
+    <p id="credits">Credits: —</p>
 
     <button id="loginBtn">Sign in with Google</button>
     <button id="logoutBtn" style="display:none;">Sign out</button>
@@ -27,28 +28,52 @@
         const status = document.getElementById("status");
         const loginBtn = document.getElementById("loginBtn");
         const logoutBtn = document.getElementById("logoutBtn");
+        const credits = document.getElementById("credits");
 
-        async function updatePage() {
-            const { data, error } = await supabaseClient.auth.getSession();
+async function updatePage() {
+    const { data, error } = await supabaseClient.auth.getSession();
 
-            if (error) {
-                status.textContent = "Error checking session: " + error.message;
-                return;
-            }
+    if (error) {
+        status.textContent = "Error checking session: " + error.message;
+        credits.textContent = "Credits: —";
+        return;
+    }
 
-            if (data.session) {
-                status.textContent =
-                    "Logged in as: " + data.session.user.email;
+    if (data.session) {
+        const user = data.session.user;
 
-                loginBtn.style.display = "none";
-                logoutBtn.style.display = "inline";
-            } else {
-                status.textContent = "Not logged in.";
+        status.textContent =
+            "Logged in as: " + user.email;
 
-                loginBtn.style.display = "inline";
-                logoutBtn.style.display = "none";
-            }
+        loginBtn.style.display = "none";
+        logoutBtn.style.display = "inline";
+
+        const { data: ledgerEntries, error: ledgerError } =
+            await supabaseClient
+                .from("credit_ledger")
+                .select("amount")
+                .eq("user_id", user.id);
+
+        if (ledgerError) {
+            credits.textContent =
+                "Credits error: " + ledgerError.message;
+        } else {
+            const balance = ledgerEntries.reduce(
+                (total, entry) => total + Number(entry.amount),
+                0
+            );
+
+            credits.textContent = "Credits: " + balance;
         }
+
+    } else {
+        status.textContent = "Not logged in.";
+        credits.textContent = "Credits: —";
+
+        loginBtn.style.display = "inline";
+        logoutBtn.style.display = "none";
+    }
+}
 
         loginBtn.addEventListener("click", async () => {
             const { error } =
