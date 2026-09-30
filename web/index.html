@@ -11,6 +11,34 @@
     <p id="status">Not logged in.</p>
     <p id="credits">Credits: —</p>
 
+<div id="profileSection" style="display:none;">
+
+    <p>
+        Current username:
+        <strong id="currentUsername">(none)</strong>
+    </p>
+
+    <p>
+        <label>
+            Choose/change username:
+            <br>
+            <input
+                id="usernameInput"
+                type="text"
+                maxlength="32"
+                placeholder="3-32 letters, numbers, or underscores"
+            >
+        </label>
+
+        <button id="saveUsernameBtn">
+            Save Username
+        </button>
+    </p>
+
+    <p id="usernameResult"></p>
+
+</div>
+
     <button id="loginBtn">Sign in with Google</button>
     <button id="logoutBtn" style="display:none;">Sign out</button>
 
@@ -29,6 +57,20 @@
         const loginBtn = document.getElementById("loginBtn");
         const logoutBtn = document.getElementById("logoutBtn");
         const credits = document.getElementById("credits");
+const profileSection =
+    document.getElementById("profileSection");
+
+const currentUsername =
+    document.getElementById("currentUsername");
+
+const usernameInput =
+    document.getElementById("usernameInput");
+
+const saveUsernameBtn =
+    document.getElementById("saveUsernameBtn");
+
+const usernameResult =
+    document.getElementById("usernameResult");
 
 async function updatePage() {
     const { data, error } = await supabaseClient.auth.getSession();
@@ -41,6 +83,29 @@ async function updatePage() {
 
     if (data.session) {
         const user = data.session.user;
+
+profileSection.style.display = "block";
+
+const { data: profile, error: profileError } =
+    await supabaseClient
+        .from("profiles")
+        .select("username, display_name")
+        .eq("id", user.id)
+        .single();
+
+if (profileError) {
+
+    currentUsername.textContent =
+        "Error loading profile";
+
+} else {
+
+    currentUsername.textContent =
+        profile.username ?? "(none)";
+
+    usernameInput.value =
+        profile.username ?? "";
+}
 
         status.textContent =
             "Logged in as: " + user.email;
@@ -62,6 +127,9 @@ if (balanceError) {
     } else {
         status.textContent = "Not logged in.";
         credits.textContent = "Credits: —";
+
+profileSection.style.display = "none";
+usernameResult.textContent = "";
 
         loginBtn.style.display = "inline";
         logoutBtn.style.display = "none";
@@ -91,6 +159,100 @@ if (balanceError) {
 
             await updatePage();
         });
+
+saveUsernameBtn.addEventListener(
+    "click",
+    async () => {
+
+        usernameResult.textContent = "";
+
+        const newUsername =
+            usernameInput.value.trim();
+
+
+        if (
+            newUsername.length < 3 ||
+            newUsername.length > 32
+        ) {
+            usernameResult.textContent =
+                "Username must be between 3 and 32 characters.";
+
+            return;
+        }
+
+
+        if (!/^[A-Za-z0-9_]+$/.test(newUsername)) {
+
+            usernameResult.textContent =
+                "Username may contain only letters, numbers, and underscores.";
+
+            return;
+        }
+
+
+        saveUsernameBtn.disabled = true;
+
+
+        const { data: sessionData } =
+            await supabaseClient.auth.getSession();
+
+        const user =
+            sessionData.session?.user;
+
+
+        if (!user) {
+
+            usernameResult.textContent =
+                "You are not logged in.";
+
+            saveUsernameBtn.disabled = false;
+
+            return;
+        }
+
+
+        const { data, error } =
+            await supabaseClient
+                .from("profiles")
+                .update({
+                    username: newUsername
+                })
+                .eq("id", user.id)
+                .select("username")
+                .single();
+
+
+        if (error) {
+
+            if (error.code === "23505") {
+
+                usernameResult.textContent =
+                    "That username is already taken.";
+
+            } else if (error.code === "23514") {
+
+                usernameResult.textContent =
+                    "That username is not valid.";
+
+            } else {
+
+                usernameResult.textContent =
+                    "Error: " + error.message;
+            }
+
+        } else {
+
+            currentUsername.textContent =
+                data.username;
+
+            usernameResult.textContent =
+                "Username saved.";
+        }
+
+
+        saveUsernameBtn.disabled = false;
+    }
+);
 
         supabaseClient.auth.onAuthStateChange(() => {
             updatePage();

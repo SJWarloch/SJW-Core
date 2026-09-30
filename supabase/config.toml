@@ -9,3 +9,25 @@ entrypoint = "./functions/admin-credit/index.ts"
 # Specifies static files to be bundled with the function. Supports glob patterns.
 # For example, if you want to serve static HTML pages in your function:
 # static_files = [ "./functions/admin-credit/*.html" ]
+
+[functions.admin-user-search]
+enabled = true
+verify_jwt = false
+import_map = "./functions/admin-user-search/deno.json"
+# Uncomment to specify a custom file path to the entrypoint.
+# Supported file extensions are: .ts, .js, .mjs, .jsx, .tsx
+entrypoint = "./functions/admin-user-search/index.ts"
+# Specifies static files to be bundled with the function. Supports glob patterns.
+# For example, if you want to serve static HTML pages in your function:
+# static_files = [ "./functions/admin-user-search/*.html" ]
+
+[functions.admin-resolve-users]
+enabled = true
+verify_jwt = false
+import_map = "./functions/admin-resolve-users/deno.json"
+# Uncomment to specify a custom file path to the entrypoint.
+# Supported file extensions are: .ts, .js, .mjs, .jsx, .tsx
+entrypoint = "./functions/admin-resolve-users/index.ts"
+# Specifies static files to be bundled with the function. Supports glob patterns.
+# For example, if you want to serve static HTML pages in your function:
+# static_files = [ "./functions/admin-resolve-users/*.html" ]

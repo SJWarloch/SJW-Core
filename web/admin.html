@@ -1,0 +1,1119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>SJW Core Admin</title>
+</head>
+<body>
+
+    <h1>Subversive Joy Works</h1>
+    <h2>Credit Administration</h2>
+
+    <p id="status">Checking login...</p>
+
+    <button id="loginBtn" style="display:none;">
+        Sign in with Google
+    </button>
+
+    <button id="logoutBtn" style="display:none;">
+        Sign out
+    </button>
+
+    <hr>
+
+    <div id="adminPanel" style="display:none;">
+
+        <h3>Find User</h3>
+
+        <p>
+            <input
+                id="userSearch"
+                type="text"
+                size="50"
+                placeholder="Email, username, or display name"
+            >
+
+            <button id="searchBtn">
+                Search
+            </button>
+        </p>
+
+        <div id="searchResults"></div>
+
+        <hr>
+
+        <h3>Add Credit Ledger Entry</h3>
+
+        <p>
+            <label>
+                Target SJW User UUID:
+                <br>
+                <input
+                    id="userId"
+                    type="text"
+                    size="50"
+                    placeholder="xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
+                >
+            </label>
+        </p>
+
+        <p>
+            <label>
+                Amount:
+                <br>
+                <input
+                    id="amount"
+                    type="number"
+                    step="1"
+                    value="50"
+                >
+            </label>
+        </p>
+
+        <p>
+            Positive amounts add Credits.<br>
+            Negative amounts remove Credits.
+        </p>
+
+        <p>
+            <label>
+                Entry type:
+                <br>
+                <select id="entryType">
+                    <option value="adjustment">Adjustment</option>
+                    <option value="promotion">Promotion</option>
+                    <option value="reward">Reward</option>
+                    <option value="refund">Refund</option>
+                    <option value="purchase">Purchase</option>
+                </select>
+            </label>
+        </p>
+
+        <p>
+            <label>
+                Source reference:
+                <br>
+                <input
+                    id="sourceReference"
+                    type="text"
+                    size="50"
+                    placeholder="Optional"
+                >
+            </label>
+        </p>
+
+        <p>
+            <label>
+                Description:
+                <br>
+                <input
+                    id="description"
+                    type="text"
+                    size="70"
+                    placeholder="Why are these Credits changing?"
+                >
+            </label>
+        </p>
+
+        <button id="applyBtn">
+            Apply Transaction
+        </button>
+
+        <h3>Result</h3>
+
+        <pre id="result">No transaction submitted yet.</pre>
+
+        <hr>
+
+        <h3>Bulk Credit Issuance</h3>
+
+        <p>
+            One recipient per line:
+        </p>
+
+        <pre>email-or-username,amount,optional description</pre>
+
+        <p>
+            Examples:
+        </p>
+
+        <pre>alice@example.com,500
+BobUsername,1000
+carol@example.com,250,Special supporter bonus</pre>
+
+        <p>
+            <label>
+                Entry type:
+                <br>
+                <select id="bulkEntryType">
+                    <option value="promotion">Promotion</option>
+                    <option value="reward">Reward</option>
+                    <option value="adjustment">Adjustment</option>
+                    <option value="refund">Refund</option>
+                </select>
+            </label>
+        </p>
+
+        <p>
+            <label>
+                Source reference:
+                <br>
+                <input
+                    id="bulkSourceReference"
+                    type="text"
+                    size="60"
+                    placeholder="Example: patreon_2026_09"
+                >
+            </label>
+        </p>
+
+        <p>
+            <label>
+                Default description:
+                <br>
+                <input
+                    id="bulkDescription"
+                    type="text"
+                    size="70"
+                    placeholder="Used when a line has no description"
+                >
+            </label>
+        </p>
+
+        <textarea
+            id="bulkInput"
+            rows="12"
+            cols="90"
+        ></textarea>
+
+        <p>
+            <button id="previewBulkBtn">
+                Preview Batch
+            </button>
+
+            <button
+                id="applyBulkBtn"
+                disabled
+            >
+                Apply Batch
+            </button>
+        </p>
+
+        <pre id="bulkResult">No batch prepared.</pre>
+
+    </div>
+
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <script>
+
+        const SUPABASE_URL =
+            "https://ersyehphlrwpdidagqvt.supabase.co";
+
+        const SUPABASE_PUBLISHABLE_KEY =
+            "sb_publishable_8v5kG8lwO8rsXOp_50wjaA_fcV1PfEh";
+
+
+        const supabaseClient =
+            window.supabase.createClient(
+                SUPABASE_URL,
+                SUPABASE_PUBLISHABLE_KEY
+            );
+
+
+        const status =
+            document.getElementById("status");
+
+        const loginBtn =
+            document.getElementById("loginBtn");
+
+        const logoutBtn =
+            document.getElementById("logoutBtn");
+
+        const adminPanel =
+            document.getElementById("adminPanel");
+
+        const userSearchInput =
+            document.getElementById("userSearch");
+
+        const searchBtn =
+            document.getElementById("searchBtn");
+
+        const searchResults =
+            document.getElementById("searchResults");
+
+        const userIdInput =
+            document.getElementById("userId");
+
+        const amountInput =
+            document.getElementById("amount");
+
+        const entryTypeInput =
+            document.getElementById("entryType");
+
+        const sourceReferenceInput =
+            document.getElementById("sourceReference");
+
+        const descriptionInput =
+            document.getElementById("description");
+
+        const applyBtn =
+            document.getElementById("applyBtn");
+
+        const result =
+            document.getElementById("result");
+
+        const bulkEntryType =
+            document.getElementById("bulkEntryType");
+
+        const bulkSourceReference =
+            document.getElementById("bulkSourceReference");
+
+        const bulkDescription =
+            document.getElementById("bulkDescription");
+
+        const bulkInput =
+            document.getElementById("bulkInput");
+
+        const previewBulkBtn =
+            document.getElementById("previewBulkBtn");
+
+        const applyBulkBtn =
+            document.getElementById("applyBulkBtn");
+
+        const bulkResult =
+            document.getElementById("bulkResult");
+
+
+        let pendingBulkTransactions = null;
+        let pendingBulkBatchId = null;
+
+
+        function parseBulkInput() {
+
+            const lines =
+                bulkInput.value
+                    .split(/\r?\n/)
+                    .map(line => line.trim())
+                    .filter(line => line.length > 0);
+
+
+            const parsed = [];
+
+
+            for (
+                let lineNumber = 0;
+                lineNumber < lines.length;
+                lineNumber++
+            ) {
+
+                const line =
+                    lines[lineNumber];
+
+
+                // First field = recipient.
+                // Second field = amount.
+                // Everything after that becomes the description,
+                // allowing descriptions themselves to contain commas.
+
+                const pieces =
+                    line.split(",");
+
+
+                if (pieces.length < 2) {
+
+                    throw new Error(
+                        "Line " +
+                        (lineNumber + 1) +
+                        " needs at least a recipient and amount."
+                    );
+                }
+
+
+                const identifier =
+                    pieces.shift().trim();
+
+                const amountText =
+                    pieces.shift().trim();
+
+                const description =
+                    pieces.join(",").trim();
+
+
+                const amount =
+                    Number(amountText);
+
+
+                if (!identifier) {
+
+                    throw new Error(
+                        "Line " +
+                        (lineNumber + 1) +
+                        " has no recipient."
+                    );
+                }
+
+
+                if (
+                    !Number.isSafeInteger(amount) ||
+                    amount === 0
+                ) {
+
+                    throw new Error(
+                        "Line " +
+                        (lineNumber + 1) +
+                        " has an invalid amount."
+                    );
+                }
+
+
+                parsed.push({
+                    identifier,
+                    amount,
+                    description
+                });
+            }
+
+
+            if (parsed.length === 0) {
+
+                throw new Error(
+                    "Enter at least one transaction."
+                );
+            }
+
+
+            if (parsed.length > 500) {
+
+                throw new Error(
+                    "A batch may contain at most 500 transactions."
+                );
+            }
+
+
+            return parsed;
+        }
+
+
+        function invalidateBulkPreview() {
+
+            if (!pendingBulkTransactions) {
+                return;
+            }
+
+            pendingBulkTransactions = null;
+            pendingBulkBatchId = null;
+            applyBulkBtn.disabled = true;
+
+            bulkResult.textContent =
+                "Batch changed since preview. Preview again before applying.";
+        }
+
+
+        async function formatFunctionError(error) {
+
+            let errorDetails =
+                error.message;
+
+            try {
+
+                if (error.context) {
+
+                    const errorBody =
+                        await error.context.json();
+
+                    errorDetails +=
+                        "\n\n" +
+                        JSON.stringify(
+                            errorBody,
+                            null,
+                            2
+                        );
+                }
+
+            } catch (_) {
+                // Keep the basic error message.
+            }
+
+            return errorDetails;
+        }
+
+
+        async function updatePage() {
+
+            const { data, error } =
+                await supabaseClient.auth.getSession();
+
+            if (error) {
+
+                status.textContent =
+                    "Session error: " + error.message;
+
+                return;
+            }
+
+
+            if (data.session) {
+
+                status.textContent =
+                    "Logged in as: " +
+                    data.session.user.email;
+
+                loginBtn.style.display = "none";
+                logoutBtn.style.display = "inline";
+                adminPanel.style.display = "block";
+
+            } else {
+
+                status.textContent =
+                    "Not logged in.";
+
+                loginBtn.style.display = "inline";
+                logoutBtn.style.display = "none";
+                adminPanel.style.display = "none";
+            }
+        }
+
+
+        loginBtn.addEventListener(
+            "click",
+            async () => {
+
+                const { error } =
+                    await supabaseClient.auth
+                        .signInWithOAuth({
+                            provider: "google"
+                        });
+
+                if (error) {
+
+                    status.textContent =
+                        "Login error: " +
+                        error.message;
+                }
+            }
+        );
+
+
+        logoutBtn.addEventListener(
+            "click",
+            async () => {
+
+                await supabaseClient.auth.signOut();
+
+                await updatePage();
+            }
+        );
+
+
+        searchBtn.addEventListener(
+            "click",
+            async () => {
+
+                const searchTerm =
+                    userSearchInput.value.trim();
+
+
+                if (searchTerm.length < 2) {
+
+                    searchResults.textContent =
+                        "Enter at least 2 characters.";
+
+                    return;
+                }
+
+
+                searchResults.textContent =
+                    "Searching...";
+
+                searchBtn.disabled = true;
+
+
+                const { data, error } =
+                    await supabaseClient.functions.invoke(
+                        "admin-user-search",
+                        {
+                            body: {
+                                search_term: searchTerm
+                            }
+                        }
+                    );
+
+
+                searchBtn.disabled = false;
+
+
+                if (error) {
+
+                    const errorDetails =
+                        await formatFunctionError(error);
+
+                    searchResults.textContent =
+                        "Search error:\n" +
+                        errorDetails;
+
+                    return;
+                }
+
+
+                const users =
+                    data?.users ?? [];
+
+
+                if (users.length === 0) {
+
+                    searchResults.textContent =
+                        "No matching users.";
+
+                    return;
+                }
+
+
+                // Clear old results.
+                searchResults.innerHTML = "";
+
+
+                for (const user of users) {
+
+                    const container =
+                        document.createElement("div");
+
+                    container.style.marginBottom =
+                        "12px";
+
+
+                    const info =
+                        document.createElement("span");
+
+
+                    const username =
+                        user.username ??
+                        "(no username)";
+
+                    const displayName =
+                        user.display_name ??
+                        "(no display name)";
+
+
+                    info.textContent =
+                        username +
+                        " | " +
+                        displayName +
+                        " | " +
+                        user.email +
+                        " | Credits: " +
+                        user.credit_balance +
+                        " ";
+
+
+                    const selectButton =
+                        document.createElement("button");
+
+                    selectButton.textContent =
+                        "Select";
+
+
+                    selectButton.addEventListener(
+                        "click",
+                        () => {
+
+                            userIdInput.value =
+                                user.user_id;
+
+                            result.textContent =
+                                "Selected user:\n\n" +
+                                "Email: " +
+                                user.email +
+                                "\nUsername: " +
+                                username +
+                                "\nDisplay name: " +
+                                displayName +
+                                "\nCurrent Credits: " +
+                                user.credit_balance +
+                                "\nUUID: " +
+                                user.user_id;
+                        }
+                    );
+
+
+                    container.appendChild(info);
+                    container.appendChild(selectButton);
+
+                    searchResults.appendChild(container);
+                }
+            }
+        );
+
+
+        previewBulkBtn.addEventListener(
+            "click",
+            async () => {
+
+                pendingBulkTransactions = null;
+                pendingBulkBatchId = null;
+
+                applyBulkBtn.disabled = true;
+
+                bulkResult.textContent =
+                    "Preparing preview...";
+
+
+                let parsed;
+
+
+                try {
+
+                    parsed =
+                        parseBulkInput();
+
+                } catch (error) {
+
+                    bulkResult.textContent =
+                        "ERROR\n\n" +
+                        error.message;
+
+                    return;
+                }
+
+
+                const identifiers =
+                    parsed.map(
+                        item => item.identifier
+                    );
+
+
+                const { data, error } =
+                    await supabaseClient.functions.invoke(
+                        "admin-resolve-users",
+                        {
+                            body: {
+                                identifiers
+                            }
+                        }
+                    );
+
+
+                if (error) {
+
+                    const errorDetails =
+                        await formatFunctionError(error);
+
+                    bulkResult.textContent =
+                        "ERROR\n\n" +
+                        errorDetails;
+
+                    return;
+                }
+
+
+                const resolvedUsers =
+                    data?.users ?? [];
+
+
+                if (
+                    resolvedUsers.length !==
+                    parsed.length
+                ) {
+
+                    bulkResult.textContent =
+                        "ERROR\n\n" +
+                        "Resolver returned an unexpected number of rows.";
+
+                    return;
+                }
+
+
+                let hasErrors = false;
+
+                const seenUserIds =
+                    new Set();
+
+                const previewLines =
+                    [];
+
+                let totalCredits = 0;
+
+
+                for (
+                    let i = 0;
+                    i < parsed.length;
+                    i++
+                ) {
+
+                    const request =
+                        parsed[i];
+
+                    const resolved =
+                        resolvedUsers[i];
+
+
+                    if (!resolved.user_id) {
+
+                        hasErrors = true;
+
+                        previewLines.push(
+                            "NOT FOUND: " +
+                            request.identifier
+                        );
+
+                        continue;
+                    }
+
+
+                    if (
+                        seenUserIds.has(
+                            resolved.user_id
+                        )
+                    ) {
+
+                        hasErrors = true;
+
+                        previewLines.push(
+                            "DUPLICATE USER: " +
+                            request.identifier
+                        );
+
+                        continue;
+                    }
+
+
+                    seenUserIds.add(
+                        resolved.user_id
+                    );
+
+
+                    totalCredits +=
+                        request.amount;
+
+
+                    previewLines.push(
+                        request.identifier +
+                        " -> " +
+                        (
+                            resolved.username ??
+                            resolved.email
+                        ) +
+                        " : " +
+                        (
+                            request.amount > 0
+                                ? "+"
+                                : ""
+                        ) +
+                        request.amount
+                    );
+                }
+
+
+                previewLines.push("");
+                previewLines.push(
+                    "Recipients: " +
+                    parsed.length
+                );
+
+                previewLines.push(
+                    "Net Credits: " +
+                    (
+                        totalCredits > 0
+                            ? "+"
+                            : ""
+                    ) +
+                    totalCredits
+                );
+
+
+                if (hasErrors) {
+
+                    previewLines.push("");
+                    previewLines.push(
+                        "BATCH CANNOT BE APPLIED."
+                    );
+
+                    previewLines.push(
+                        "Fix unresolved or duplicate recipients and preview again."
+                    );
+
+
+                    bulkResult.textContent =
+                        previewLines.join("\n");
+
+                    return;
+                }
+
+
+                // ----------------------------------------------------
+                // Build the actual ledger transactions.
+                //
+                // The random batch ID means every row receives a stable
+                // idempotency key for THIS preview.
+                // ----------------------------------------------------
+
+                pendingBulkBatchId =
+                    crypto.randomUUID();
+
+
+                pendingBulkTransactions =
+                    parsed.map(
+                        (request, index) => {
+
+                            const resolved =
+                                resolvedUsers[index];
+
+                            return {
+
+                                user_id:
+                                    resolved.user_id,
+
+                                amount:
+                                    request.amount,
+
+                                entry_type:
+                                    bulkEntryType.value,
+
+                                source_reference:
+                                    bulkSourceReference.value.trim()
+                                    || null,
+
+                                idempotency_key:
+                                    "admin-bulk:" +
+                                    pendingBulkBatchId +
+                                    ":" +
+                                    index,
+
+                                description:
+                                    request.description ||
+                                    bulkDescription.value.trim() ||
+                                    null
+                            };
+                        }
+                    );
+
+
+                bulkResult.textContent =
+                    previewLines.join("\n");
+
+
+                applyBulkBtn.disabled = false;
+            }
+        );
+
+
+        applyBulkBtn.addEventListener(
+            "click",
+            async () => {
+
+                if (
+                    !pendingBulkTransactions ||
+                    pendingBulkTransactions.length === 0
+                ) {
+
+                    bulkResult.textContent =
+                        "No valid batch is currently prepared.";
+
+                    return;
+                }
+
+
+                applyBulkBtn.disabled = true;
+                previewBulkBtn.disabled = true;
+
+
+                bulkResult.textContent +=
+                    "\n\nApplying batch...";
+
+
+                const { data, error } =
+                    await supabaseClient.functions.invoke(
+                        "admin-credit",
+                        {
+                            body: {
+                                transactions:
+                                    pendingBulkTransactions
+                            }
+                        }
+                    );
+
+
+                previewBulkBtn.disabled = false;
+
+
+                if (error) {
+
+                    const errorDetails =
+                        await formatFunctionError(error);
+
+                    bulkResult.textContent +=
+                        "\n\nERROR\n" +
+                        errorDetails;
+
+                    // Keep the prepared batch intact.
+                    // Retrying will use the same idempotency keys.
+
+                    applyBulkBtn.disabled = false;
+
+                    return;
+                }
+
+
+                bulkResult.textContent +=
+                    "\n\nSUCCESS\n" +
+                    "Inserted: " +
+                    (
+                        data?.inserted ??
+                        pendingBulkTransactions.length
+                    ) +
+                    " ledger entries." +
+                    "\nBatch ID: " +
+                    pendingBulkBatchId;
+
+
+                // Clear the prepared transaction set so that clicking
+                // Apply again cannot accidentally create another batch.
+
+                pendingBulkTransactions = null;
+                pendingBulkBatchId = null;
+            }
+        );
+
+
+        applyBtn.addEventListener(
+            "click",
+            async () => {
+
+                result.textContent =
+                    "Submitting...";
+
+                applyBtn.disabled = true;
+
+
+                const userId =
+                    userIdInput.value.trim();
+
+                const amount =
+                    Number(amountInput.value);
+
+                const entryType =
+                    entryTypeInput.value;
+
+                const sourceReference =
+                    sourceReferenceInput.value.trim();
+
+                const description =
+                    descriptionInput.value.trim();
+
+
+                if (!userId) {
+
+                    result.textContent =
+                        "Target user UUID is required.";
+
+                    applyBtn.disabled = false;
+
+                    return;
+                }
+
+
+                if (
+                    !Number.isSafeInteger(amount) ||
+                    amount === 0
+                ) {
+
+                    result.textContent =
+                        "Amount must be a non-zero whole number.";
+
+                    applyBtn.disabled = false;
+
+                    return;
+                }
+
+
+                const idempotencyKey =
+                    "manual:" + crypto.randomUUID();
+
+
+                const { data, error } =
+                    await supabaseClient.functions.invoke(
+                        "admin-credit",
+                        {
+                            body: {
+                                user_id: userId,
+                                amount: amount,
+
+                                entry_type:
+                                    entryType,
+
+                                source_reference:
+                                    sourceReference || null,
+
+                                idempotency_key:
+                                    idempotencyKey,
+
+                                description:
+                                    description || null
+                            }
+                        }
+                    );
+
+
+                if (error) {
+
+                    const errorDetails =
+                        await formatFunctionError(error);
+
+                    result.textContent =
+                        "ERROR\n\n" +
+                        errorDetails;
+
+                } else {
+
+                    result.textContent =
+                        "SUCCESS\n\n" +
+                        JSON.stringify(
+                            data,
+                            null,
+                            2
+                        ) +
+                        "\n\nIdempotency key:\n" +
+                        idempotencyKey;
+                }
+
+
+                applyBtn.disabled = false;
+            }
+        );
+
+
+        bulkInput.addEventListener(
+            "input",
+            invalidateBulkPreview
+        );
+
+        bulkEntryType.addEventListener(
+            "change",
+            invalidateBulkPreview
+        );
+
+        bulkSourceReference.addEventListener(
+            "input",
+            invalidateBulkPreview
+        );
+
+        bulkDescription.addEventListener(
+            "input",
+            invalidateBulkPreview
+        );
+
+
+        supabaseClient.auth.onAuthStateChange(
+            () => {
+                updatePage();
+            }
+        );
+
+
+        updatePage();
+
+    </script>
+
+</body>
+</html>
