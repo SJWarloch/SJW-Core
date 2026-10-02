@@ -9,44 +9,273 @@
     <h1>Subversive Joy Works</h1>
 
     <p id="status">Checking login...</p>
-    <p id="credits">Credits: —</p>
 
-    <div id="profileSection" style="display:none;">
+    <p id="oauthMessage"></p>
+
+    <!-- ======================================================
+         SIGN IN / REGISTRATION
+         ====================================================== -->
+
+    <div id="authSection" style="display:none;">
+
+        <h2>Sign In</h2>
 
         <p>
-            Current username:
-            <strong id="currentUsername">(none)</strong>
+            <label>
+                Email:
+                <br>
+                <input
+                    id="signInEmail"
+                    type="email"
+                    size="40"
+                    autocomplete="email"
+                >
+            </label>
         </p>
 
         <p>
             <label>
-                Choose/change username:
+                Password:
                 <br>
                 <input
-                    id="usernameInput"
-                    type="text"
-                    maxlength="32"
-                    placeholder="3-32 letters, numbers, or underscores"
+                    id="signInPassword"
+                    type="password"
+                    size="40"
+                    autocomplete="current-password"
                 >
             </label>
+        </p>
 
-            <button id="saveUsernameBtn">
-                Save Username
+        <p>
+            <button id="emailLoginBtn">
+                Sign in with Email
+            </button>
+
+            <button id="forgotPasswordBtn">
+                Forgot Password?
             </button>
         </p>
 
-        <p id="usernameResult"></p>
+        <hr>
+
+        <h2>Create Account</h2>
+
+        <p>
+            <label>
+                Email:
+                <br>
+                <input
+                    id="signUpEmail"
+                    type="email"
+                    size="40"
+                    autocomplete="email"
+                >
+            </label>
+        </p>
+
+        <p>
+            <label>
+                Password:
+                <br>
+                <input
+                    id="signUpPassword"
+                    type="password"
+                    size="40"
+                    minlength="8"
+                    autocomplete="new-password"
+                >
+            </label>
+        </p>
+
+        <p>
+            <label>
+                Confirm Password:
+                <br>
+                <input
+                    id="signUpPasswordConfirm"
+                    type="password"
+                    size="40"
+                    minlength="8"
+                    autocomplete="new-password"
+                >
+            </label>
+        </p>
+
+        <p>
+            Passwords must contain at least 8 characters.
+        </p>
+
+        <button id="emailSignUpBtn">
+            Create Account with Email
+        </button>
+
+        <hr>
+
+        <h2>Or</h2>
+
+        <button id="googleLoginBtn">
+            Continue with Google
+        </button>
+
+        <p id="authMessage"></p>
 
     </div>
 
-    <button id="loginBtn" style="display:none;">
-        Sign in with Google
-    </button>
 
-    <button id="logoutBtn" style="display:none;">
-        Sign out
-    </button>
+    <!-- ======================================================
+         LOGGED-IN ACCOUNT
+         ====================================================== -->
 
+    <div id="accountSection" style="display:none;">
+
+        <p id="credits">Credits: —</p>
+
+        <!-- --------------------------------------------------
+             SJW PROFILE
+             -------------------------------------------------- -->
+
+        <div id="profileSection">
+
+            <p>
+                Current username:
+                <strong id="currentUsername">(none)</strong>
+            </p>
+
+            <p>
+                <label>
+                    Choose/change username:
+                    <br>
+                    <input
+                        id="usernameInput"
+                        type="text"
+                        maxlength="32"
+                        placeholder="3-32 letters, numbers, or underscores"
+                    >
+                </label>
+
+                <button id="saveUsernameBtn">
+                    Save Username
+                </button>
+            </p>
+
+            <p id="usernameResult"></p>
+
+        </div>
+
+        <hr>
+
+        <!-- --------------------------------------------------
+             AUTHENTICATION METHODS
+             -------------------------------------------------- -->
+
+        <h2>Authentication Methods</h2>
+
+        <p>
+            Account email:
+            <strong id="accountEmail">—</strong>
+        </p>
+
+        <p>
+            Email/password:
+            <strong id="emailPasswordStatus">Checking...</strong>
+        </p>
+
+        <p>
+            Google:
+            <strong id="googleStatus">Checking...</strong>
+        </p>
+
+        <div id="passwordSection">
+
+            <h3 id="passwordHeading">
+                Set or Change Password
+            </h3>
+
+            <p>
+                <label>
+                    New password:
+                    <br>
+                    <input
+                        id="accountPassword"
+                        type="password"
+                        size="40"
+                        minlength="8"
+                        autocomplete="new-password"
+                    >
+                </label>
+            </p>
+
+            <p>
+                <label>
+                    Confirm new password:
+                    <br>
+                    <input
+                        id="accountPasswordConfirm"
+                        type="password"
+                        size="40"
+                        minlength="8"
+                        autocomplete="new-password"
+                    >
+                </label>
+            </p>
+
+            <button id="setPasswordBtn">
+                Set Password
+            </button>
+
+            <p id="passwordResult"></p>
+
+        </div>
+
+        <p>
+            <button
+                id="linkGoogleBtn"
+                style="display:none;"
+            >
+                Link Google Account
+            </button>
+
+            <button
+                id="unlinkGoogleBtn"
+                style="display:none;"
+            >
+                Unlink Google Account
+            </button>
+        </p>
+
+        <p id="identityResult"></p>
+
+        <hr>
+
+        <button id="logoutBtn">
+            Sign out
+        </button>
+
+        <hr>
+
+        <!-- --------------------------------------------------
+             ACCOUNT DELETION
+             -------------------------------------------------- -->
+
+        <h2>Danger Zone</h2>
+
+        <p>
+            Deleting your SJW account is permanent.
+            Your profile, Credits, and account data will be deleted.
+        </p>
+
+        <button id="deleteAccountBtn">
+            Delete Account
+        </button>
+
+        <p id="deleteAccountResult"></p>
+
+    </div>
+
+
+    <!-- ======================================================
+         SUPABASE
+         ====================================================== -->
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
@@ -66,14 +295,58 @@
             );
 
 
+        // =====================================================
+        // PAGE ELEMENTS
+        // =====================================================
+
         const status =
             document.getElementById("status");
 
+        const oauthMessage =
+            document.getElementById("oauthMessage");
+
+        const authSection =
+            document.getElementById("authSection");
+
+        const accountSection =
+            document.getElementById("accountSection");
+
+        const authMessage =
+            document.getElementById("authMessage");
+
+
+        const signInEmail =
+            document.getElementById("signInEmail");
+
+        const signInPassword =
+            document.getElementById("signInPassword");
+
+        const emailLoginBtn =
+            document.getElementById("emailLoginBtn");
+
+        const forgotPasswordBtn =
+            document.getElementById("forgotPasswordBtn");
+
+
+        const signUpEmail =
+            document.getElementById("signUpEmail");
+
+        const signUpPassword =
+            document.getElementById("signUpPassword");
+
+        const signUpPasswordConfirm =
+            document.getElementById("signUpPasswordConfirm");
+
+        const emailSignUpBtn =
+            document.getElementById("emailSignUpBtn");
+
+
+        const googleLoginBtn =
+            document.getElementById("googleLoginBtn");
+
+
         const credits =
             document.getElementById("credits");
-
-        const profileSection =
-            document.getElementById("profileSection");
 
         const currentUsername =
             document.getElementById("currentUsername");
@@ -87,12 +360,442 @@
         const usernameResult =
             document.getElementById("usernameResult");
 
-        const loginBtn =
-            document.getElementById("loginBtn");
+
+        const accountEmail =
+            document.getElementById("accountEmail");
+
+        const emailPasswordStatus =
+            document.getElementById("emailPasswordStatus");
+
+        const googleStatus =
+            document.getElementById("googleStatus");
+
+        const passwordHeading =
+            document.getElementById("passwordHeading");
+
+        const accountPassword =
+            document.getElementById("accountPassword");
+
+        const accountPasswordConfirm =
+            document.getElementById("accountPasswordConfirm");
+
+        const setPasswordBtn =
+            document.getElementById("setPasswordBtn");
+
+        const passwordResult =
+            document.getElementById("passwordResult");
+
+        const linkGoogleBtn =
+            document.getElementById("linkGoogleBtn");
+
+        const unlinkGoogleBtn =
+            document.getElementById("unlinkGoogleBtn");
+
+        const identityResult =
+            document.getElementById("identityResult");
 
         const logoutBtn =
             document.getElementById("logoutBtn");
 
+        const deleteAccountBtn =
+            document.getElementById(
+                "deleteAccountBtn"
+            );
+
+        const deleteAccountResult =
+            document.getElementById(
+                "deleteAccountResult"
+            );
+
+
+        // =====================================================
+        // AUTHENTICATION-METHOD STATE
+        // =====================================================
+        //
+        // These are JavaScript state variables, so they must live
+        // inside the <script> block rather than directly in the HTML.
+
+        let currentGoogleIdentity = null;
+        let currentHasPasswordLogin = false;
+
+
+        // =====================================================
+        // GENERAL HELPERS
+        // =====================================================
+
+        function isValidEmail(email) {
+
+            return (
+                typeof email === "string" &&
+                email.includes("@") &&
+                email.length >= 3
+            );
+        }
+
+        function handleOAuthCallbackError() {
+
+            const url =
+                new URL(
+                    window.location.href
+                );
+
+
+            const error =
+                url.searchParams.get(
+                    "error"
+                );
+
+            const errorCode =
+                url.searchParams.get(
+                    "error_code"
+                );
+
+            const errorDescription =
+                url.searchParams.get(
+                    "error_description"
+                );
+
+
+            // No OAuth error was returned.
+            if (!error) {
+                return;
+            }
+
+
+            // ---------------------------------------------------------
+            // Our deliberate identity-linking rejection.
+            //
+            // Supabase reports the database rejection generically as
+            // "Error creating identity", so translate it into something
+            // useful for the user.
+            // ---------------------------------------------------------
+
+            if (
+                errorCode ===
+                    "unexpected_failure" &&
+                errorDescription ===
+                    "Error creating identity"
+            ) {
+
+                oauthMessage.textContent =
+                    "Google sign-in could not be completed. " +
+                    "If this email already belongs to an SJW account, " +
+                    "sign in using your existing login method and then " +
+                    "choose \"Link Google Account\" from your account settings.";
+
+            } else if (
+                error ===
+                "access_denied"
+            ) {
+
+                // The user may simply have cancelled Google's consent
+                // screen rather than experiencing a real failure.
+
+                oauthMessage.textContent =
+                    "Google sign-in was cancelled.";
+
+            } else {
+
+                // Any genuinely unexpected OAuth failure still gets
+                // surfaced rather than silently disappearing.
+
+                oauthMessage.textContent =
+                    "Google sign-in could not be completed." +
+                    (
+                        errorDescription
+                            ? " " +
+                                errorDescription
+                            : ""
+                    );
+            }
+
+
+            // ---------------------------------------------------------
+            // Remove OAuth error parameters from the address bar after
+            // reading them.
+            //
+            // Preserve any unrelated query parameters and the hash.
+            // ---------------------------------------------------------
+
+            url.searchParams.delete(
+                "error"
+            );
+
+            url.searchParams.delete(
+                "error_code"
+            );
+
+            url.searchParams.delete(
+                "error_description"
+            );
+
+
+            window.history.replaceState(
+                {},
+                document.title,
+                url.pathname +
+                url.search +
+                url.hash
+            );
+        }
+
+
+        // =====================================================
+        // AUTHENTICATION METHODS
+        // =====================================================
+
+        async function loadAuthenticationMethods() {
+
+            // Reset cached state first so an error cannot leave stale
+            // authentication information from a previous page state.
+
+            currentGoogleIdentity =
+                null;
+
+            currentHasPasswordLogin =
+                false;
+
+            linkGoogleBtn.style.display =
+                "none";
+
+            unlinkGoogleBtn.style.display =
+                "none";
+
+
+            // -------------------------------------------------
+            // Load the canonical Supabase user.
+            // -------------------------------------------------
+
+            const {
+                data: userData,
+                error: userError
+            } =
+                await supabaseClient.auth
+                    .getUser();
+
+
+            if (
+                userError ||
+                !userData.user
+            ) {
+
+                accountEmail.textContent =
+                    "Unable to load";
+
+                emailPasswordStatus.textContent =
+                    "Unable to load";
+
+                googleStatus.textContent =
+                    "Unable to load";
+
+                return;
+            }
+
+
+            const user =
+                userData.user;
+
+
+            accountEmail.textContent =
+                user.email ??
+                "(no email)";
+
+
+            // -------------------------------------------------
+            // Ask SJW Core whether this account ACTUALLY has a
+            // password hash.
+            //
+            // This avoids relying on Supabase identity metadata,
+            // because an OAuth-first account that later adds a
+            // password may not receive a corresponding "email"
+            // identity record.
+            // -------------------------------------------------
+
+            const {
+                data: hasPasswordLogin,
+                error: passwordStatusError
+            } =
+                await supabaseClient.rpc(
+                    "get_my_password_login_status"
+                );
+
+
+            if (passwordStatusError) {
+
+                emailPasswordStatus.textContent =
+                    "Unable to load";
+
+            } else {
+
+                currentHasPasswordLogin =
+                    hasPasswordLogin === true;
+
+
+                if (currentHasPasswordLogin) {
+
+                    emailPasswordStatus.textContent =
+                        "Available";
+
+                    passwordHeading.textContent =
+                        "Change Password";
+
+                    setPasswordBtn.textContent =
+                        "Change Password";
+
+                } else {
+
+                    emailPasswordStatus.textContent =
+                        "Not configured";
+
+                    passwordHeading.textContent =
+                        "Add Email/Password Login";
+
+                    setPasswordBtn.textContent =
+                        "Add Password";
+                }
+            }
+
+
+            // -------------------------------------------------
+            // Load actual linked OAuth identities.
+            // -------------------------------------------------
+
+            const {
+                data: identityData,
+                error: identityError
+            } =
+                await supabaseClient.auth
+                    .getUserIdentities();
+
+
+            if (identityError) {
+
+                googleStatus.textContent =
+                    "Unable to load";
+
+                return;
+            }
+
+
+            const identities =
+                identityData?.identities ??
+                [];
+
+
+            const googleIdentities =
+                identities.filter(
+                    identity =>
+                        identity.provider ===
+                        "google"
+                );
+
+
+            // Our database policy now prevents new SJW accounts
+            // from accumulating more than one Google identity.
+            //
+            // Existing test accounts created before that policy may
+            // temporarily contain more than one, so the UI can still
+            // detect and display that historical condition.
+
+            currentGoogleIdentity =
+                googleIdentities.length > 0
+                    ? googleIdentities[
+                        googleIdentities.length - 1
+                    ]
+                    : null;
+
+
+            // -------------------------------------------------
+            // Google status.
+            // -------------------------------------------------
+
+            if (googleIdentities.length === 0) {
+
+                googleStatus.textContent =
+                    "Not linked";
+
+                linkGoogleBtn.style.display =
+                    "inline";
+
+                unlinkGoogleBtn.style.display =
+                    "none";
+
+            } else {
+
+                const linkedEmails =
+                    googleIdentities
+                        .map(
+                            identity =>
+                                identity
+                                    ?.identity_data
+                                    ?.email
+                        )
+                        .filter(
+                            email =>
+                                Boolean(email)
+                        );
+
+
+                if (
+                    googleIdentities.length === 1
+                ) {
+
+                    googleStatus.textContent =
+                        linkedEmails.length > 0
+                            ? "Linked — " +
+                                linkedEmails[0]
+                            : "Linked";
+
+                } else {
+
+                    googleStatus.textContent =
+                        "WARNING: " +
+                        googleIdentities.length +
+                        " Google accounts are linked: " +
+                        linkedEmails.join(", ");
+                }
+
+
+                // An account that already has Google must never be
+                // offered another Google-link operation.
+
+                linkGoogleBtn.style.display =
+                    "none";
+
+
+                // Supabase currently requires more than one ACTUAL
+                // identity row before unlinkIdentity() is permitted.
+                //
+                // Email-first + Google:
+                //     email identity + Google identity
+                //     -> unlink works.
+                //
+                // Google-first + later-added password:
+                //     only Google may be represented in identities,
+                //     even though password login works
+                //     -> Google cannot yet be removed through the
+                //        supported unlink API.
+
+                if (
+                    currentGoogleIdentity &&
+                    identities.length > 1
+                ) {
+
+                    unlinkGoogleBtn.style.display =
+                        "inline";
+
+                } else {
+
+                    unlinkGoogleBtn.style.display =
+                        "none";
+                }
+            }
+        }
+
+
+        // =====================================================
+        // PAGE STATE
+        // =====================================================
 
         async function updatePage() {
 
@@ -106,10 +809,10 @@
                     "Error checking session: " +
                     error.message;
 
-                credits.textContent =
-                    "Credits: —";
+                authSection.style.display =
+                    "block";
 
-                profileSection.style.display =
+                accountSection.style.display =
                     "none";
 
                 return;
@@ -126,19 +829,28 @@
                     "Logged in as: " +
                     user.email;
 
-                loginBtn.style.display =
+                // A successful authenticated session supersedes any
+                // OAuth callback warning left on the logged-out page.
+                oauthMessage.textContent =
+                    "";
+
+                deleteAccountBtn.disabled =
+                    false;
+
+                deleteAccountResult.textContent =
+                    "";
+
+
+                authSection.style.display =
                     "none";
 
-                logoutBtn.style.display =
-                    "inline";
-
-                profileSection.style.display =
+                accountSection.style.display =
                     "block";
 
 
-                // ------------------------------------------------
-                // Load the user's SJW profile.
-                // ------------------------------------------------
+                // ---------------------------------------------
+                // Load SJW profile.
+                // ---------------------------------------------
 
                 const {
                     data: profile,
@@ -176,9 +888,9 @@
                 }
 
 
-                // ------------------------------------------------
-                // Load the user's current Credit balance.
-                // ------------------------------------------------
+                // ---------------------------------------------
+                // Load Credit balance.
+                // ---------------------------------------------
 
                 const {
                     data: balance,
@@ -202,10 +914,25 @@
                         balance;
                 }
 
+
+                // ---------------------------------------------
+                // Load linked authentication methods.
+                // ---------------------------------------------
+
+                await loadAuthenticationMethods();
+
             } else {
 
                 status.textContent =
                     "Not logged in.";
+
+
+                authSection.style.display =
+                    "block";
+
+                accountSection.style.display =
+                    "none";
+
 
                 credits.textContent =
                     "Credits: —";
@@ -219,21 +946,300 @@
                 usernameResult.textContent =
                     "";
 
-                profileSection.style.display =
+
+                accountEmail.textContent =
+                    "—";
+
+                emailPasswordStatus.textContent =
+                    "—";
+
+                googleStatus.textContent =
+                    "—";
+
+                identityResult.textContent =
+                    "";
+
+                passwordResult.textContent =
+                    "";
+
+                accountPassword.value =
+                    "";
+
+                accountPasswordConfirm.value =
+                    "";
+
+                currentGoogleIdentity =
+                    null;
+
+                currentHasPasswordLogin =
+                    false;
+
+                linkGoogleBtn.style.display =
                     "none";
 
-                loginBtn.style.display =
-                    "inline";
-
-                logoutBtn.style.display =
+                unlinkGoogleBtn.style.display =
                     "none";
+
+                deleteAccountBtn.disabled =
+                    false;
+
+                deleteAccountResult.textContent =
+                    "";
             }
         }
 
 
-        loginBtn.addEventListener(
+        // =====================================================
+        // EMAIL / PASSWORD SIGN IN
+        // =====================================================
+
+        emailLoginBtn.addEventListener(
             "click",
             async () => {
+
+                authMessage.textContent =
+                    "";
+
+
+                const email =
+                    signInEmail.value
+                        .trim();
+
+                const password =
+                    signInPassword.value;
+
+
+                if (!isValidEmail(email)) {
+
+                    authMessage.textContent =
+                        "Enter a valid email address.";
+
+                    return;
+                }
+
+
+                if (!password) {
+
+                    authMessage.textContent =
+                        "Enter your password.";
+
+                    return;
+                }
+
+
+                emailLoginBtn.disabled =
+                    true;
+
+
+                const { error } =
+                    await supabaseClient.auth
+                        .signInWithPassword({
+                            email,
+                            password
+                        });
+
+
+                emailLoginBtn.disabled =
+                    false;
+
+
+                if (error) {
+
+                    authMessage.textContent =
+                        "Sign-in failed: " +
+                        error.message;
+
+                    return;
+                }
+
+
+                authMessage.textContent =
+                    "";
+
+                signInPassword.value =
+                    "";
+
+
+                await updatePage();
+            }
+        );
+
+
+        // =====================================================
+        // EMAIL / PASSWORD SIGNUP
+        // =====================================================
+
+        emailSignUpBtn.addEventListener(
+            "click",
+            async () => {
+
+                authMessage.textContent =
+                    "";
+
+
+                const email =
+                    signUpEmail.value
+                        .trim();
+
+                const password =
+                    signUpPassword.value;
+
+                const confirmPassword =
+                    signUpPasswordConfirm.value;
+
+
+                if (!isValidEmail(email)) {
+
+                    authMessage.textContent =
+                        "Enter a valid email address.";
+
+                    return;
+                }
+
+
+                if (password.length < 8) {
+
+                    authMessage.textContent =
+                        "Password must contain at least 8 characters.";
+
+                    return;
+                }
+
+
+                if (password !== confirmPassword) {
+
+                    authMessage.textContent =
+                        "Passwords do not match.";
+
+                    return;
+                }
+
+
+                emailSignUpBtn.disabled =
+                    true;
+
+
+                const { data, error } =
+                    await supabaseClient.auth
+                        .signUp({
+                            email,
+                            password
+                        });
+
+
+                emailSignUpBtn.disabled =
+                    false;
+
+
+                if (error) {
+
+                    authMessage.textContent =
+                        "Signup failed: " +
+                        error.message;
+
+                    return;
+                }
+
+
+                signUpPassword.value =
+                    "";
+
+                signUpPasswordConfirm.value =
+                    "";
+
+
+                // Email confirmation is enabled in Supabase.
+                // Use a generic response so the page does not reveal
+                // whether an address already has an SJW account.
+
+                if (!data.session) {
+
+                    authMessage.textContent =
+                        "If this address can be registered, a confirmation email has been sent. Check your inbox and follow the link before signing in.";
+
+                } else {
+
+                    authMessage.textContent =
+                        "Account created successfully.";
+
+                    await updatePage();
+                }
+            }
+        );
+
+
+        // =====================================================
+        // PASSWORD RECOVERY
+        // =====================================================
+
+        forgotPasswordBtn.addEventListener(
+            "click",
+            async () => {
+
+                authMessage.textContent =
+                    "";
+
+
+                const email =
+                    signInEmail.value
+                        .trim();
+
+
+                if (!isValidEmail(email)) {
+
+                    authMessage.textContent =
+                        "Enter your email address in the Sign In section first.";
+
+                    return;
+                }
+
+
+                forgotPasswordBtn.disabled =
+                    true;
+
+
+                const { error } =
+                    await supabaseClient.auth
+                        .resetPasswordForEmail(
+                            email,
+                            {
+                                redirectTo:
+                                    "http://localhost:3000/reset-password.html"
+                            }
+                        );
+
+
+                forgotPasswordBtn.disabled =
+                    false;
+
+
+                if (error) {
+
+                    authMessage.textContent =
+                        "Unable to request password reset: " +
+                        error.message;
+
+                    return;
+                }
+
+
+                authMessage.textContent =
+                    "If an account is associated with that email address, a password-reset message has been sent.";
+            }
+        );
+
+
+        // =====================================================
+        // GOOGLE SIGN IN
+        // =====================================================
+
+        googleLoginBtn.addEventListener(
+            "click",
+            async () => {
+
+                authMessage.textContent =
+                    "";
+
 
                 const { error } =
                     await supabaseClient.auth
@@ -244,35 +1250,17 @@
 
                 if (error) {
 
-                    status.textContent =
-                        "Login error: " +
+                    authMessage.textContent =
+                        "Google login error: " +
                         error.message;
                 }
             }
         );
 
 
-        logoutBtn.addEventListener(
-            "click",
-            async () => {
-
-                const { error } =
-                    await supabaseClient.auth
-                        .signOut();
-
-
-                if (error) {
-
-                    status.textContent =
-                        "Logout error: " +
-                        error.message;
-                }
-
-
-                await updatePage();
-            }
-        );
-
+        // =====================================================
+        // USERNAME
+        // =====================================================
 
         saveUsernameBtn.addEventListener(
             "click",
@@ -283,15 +1271,9 @@
 
 
                 const newUsername =
-                    usernameInput.value.trim();
+                    usernameInput.value
+                        .trim();
 
-
-                // ------------------------------------------------
-                // Client-side username validation.
-                //
-                // PostgreSQL independently enforces the same
-                // rules, so this is primarily friendly feedback.
-                // ------------------------------------------------
 
                 if (
                     newUsername.length < 3 ||
@@ -343,13 +1325,6 @@
                 }
 
 
-                // ------------------------------------------------
-                // Update this user's own profile.
-                //
-                // RLS prevents the caller from updating somebody
-                // else's profile.
-                // ------------------------------------------------
-
                 const { data, error } =
                     await supabaseClient
                         .from("profiles")
@@ -368,16 +1343,10 @@
 
                 if (error) {
 
-                    // PostgreSQL unique violation:
-                    // another user already owns this username.
-
                     if (error.code === "23505") {
 
                         usernameResult.textContent =
                             "That username is already taken.";
-
-                    // PostgreSQL CHECK constraint violation:
-                    // username failed database validation.
 
                     } else if (
                         error.code === "23514"
@@ -409,6 +1378,454 @@
         );
 
 
+        // =====================================================
+        // LINK GOOGLE TO CURRENT SJW ACCOUNT
+        // =====================================================
+
+        linkGoogleBtn.addEventListener(
+            "click",
+            async () => {
+
+                identityResult.textContent =
+                    "";
+
+                linkGoogleBtn.disabled =
+                    true;
+
+
+                // ---------------------------------------------
+                // STEP 1:
+                //
+                // Ask SJW Core for a temporary, session-bound,
+                // single-use permission to add Google.
+                //
+                // Repeated clicks refresh the same permission
+                // rather than creating multiple active intents.
+                // ---------------------------------------------
+
+                const {
+                    error: intentError
+                } =
+                    await supabaseClient.rpc(
+                        "begin_identity_link",
+                        {
+                            link_provider:
+                                "google"
+                        }
+                    );
+
+
+                if (intentError) {
+
+                    identityResult.textContent =
+                        "Unable to begin Google linking: " +
+                        intentError.message;
+
+                    linkGoogleBtn.disabled =
+                        false;
+
+                    return;
+                }
+
+
+                // ---------------------------------------------
+                // STEP 2:
+                //
+                // Begin Supabase's actual Google OAuth linking
+                // flow.
+                //
+                // The database will refuse the identity insert
+                // unless the temporary permission above is still
+                // valid for this account/session.
+                // ---------------------------------------------
+
+                const { error } =
+                    await supabaseClient.auth
+                        .linkIdentity({
+                            provider: "google"
+                        });
+
+
+                // On a normal successful start, linkIdentity()
+                // redirects the browser to Google.
+
+                if (error) {
+
+                    // The OAuth flow did not start correctly.
+                    // Remove the unused permission rather than
+                    // leaving it active until it expires.
+
+                    await supabaseClient.rpc(
+                        "cancel_identity_link",
+                        {
+                            link_provider:
+                                "google"
+                        }
+                    );
+
+
+                    identityResult.textContent =
+                        "Unable to link Google account: " +
+                        error.message;
+
+                    linkGoogleBtn.disabled =
+                        false;
+
+                    return;
+                }
+
+
+                // Mostly defensive; normally the redirect happens
+                // before the user sees this.
+
+                identityResult.textContent =
+                    "Redirecting to Google...";
+
+                linkGoogleBtn.disabled =
+                    false;
+            }
+        );
+
+
+        // =====================================================
+        // ADD OR CHANGE EMAIL/PASSWORD LOGIN
+        // =====================================================
+
+        setPasswordBtn.addEventListener(
+            "click",
+            async () => {
+
+                passwordResult.textContent =
+                    "";
+
+
+                const password =
+                    accountPassword.value;
+
+                const confirmation =
+                    accountPasswordConfirm.value;
+
+
+                if (password.length < 8) {
+
+                    passwordResult.textContent =
+                        "Password must contain at least 8 characters.";
+
+                    return;
+                }
+
+
+                if (password !== confirmation) {
+
+                    passwordResult.textContent =
+                        "Passwords do not match.";
+
+                    return;
+                }
+
+
+                // Capture what this operation means BEFORE updateUser()
+                // runs. The auth-state event fired by the update may
+                // refresh our state before this handler resumes.
+
+                const wasPasswordLoginAvailable =
+                    currentHasPasswordLogin;
+
+
+                setPasswordBtn.disabled =
+                    true;
+
+
+                const { error } =
+                    await supabaseClient.auth
+                        .updateUser({
+                            password
+                        });
+
+
+                setPasswordBtn.disabled =
+                    false;
+
+
+                if (error) {
+
+                    passwordResult.textContent =
+                        "Unable to set password: " +
+                        error.message;
+
+                    return;
+                }
+
+
+                accountPassword.value =
+                    "";
+
+                accountPasswordConfirm.value =
+                    "";
+
+
+                // Refresh provider/identity information first, then
+                // display the success message. loadAuthenticationMethods()
+                // intentionally does not clear this result field.
+
+                await loadAuthenticationMethods();
+
+
+                passwordResult.textContent =
+                    wasPasswordLoginAvailable
+                        ? "Password changed successfully."
+                        : "Email/password login added successfully.";
+            }
+        );
+
+
+        // =====================================================
+        // UNLINK GOOGLE FROM CURRENT SJW ACCOUNT
+        // =====================================================
+
+        unlinkGoogleBtn.addEventListener(
+            "click",
+            async () => {
+
+                identityResult.textContent =
+                    "";
+
+
+                if (!currentGoogleIdentity) {
+
+                    identityResult.textContent =
+                        "No Google identity is linked.";
+
+                    return;
+                }
+
+
+                const confirmed =
+                    window.confirm(
+                        "Unlink Google from this SJW account?\n\n" +
+                        "Make sure another login method works before continuing."
+                    );
+
+
+                if (!confirmed) {
+
+                    return;
+                }
+
+
+                unlinkGoogleBtn.disabled =
+                    true;
+
+
+                const { error } =
+                    await supabaseClient.auth
+                        .unlinkIdentity(
+                            currentGoogleIdentity
+                        );
+
+
+                unlinkGoogleBtn.disabled =
+                    false;
+
+
+                if (error) {
+
+                    identityResult.textContent =
+                        "Unable to unlink Google: " +
+                        error.message;
+
+                    return;
+                }
+
+
+                await loadAuthenticationMethods();
+
+
+                identityResult.textContent =
+                    "Google account unlinked.";
+            }
+        );
+
+
+        // =====================================================
+        // LOGOUT
+        // =====================================================
+
+        logoutBtn.addEventListener(
+            "click",
+            async () => {
+
+                const { error } =
+                    await supabaseClient.auth
+                        .signOut();
+
+
+                if (error) {
+
+                    status.textContent =
+                        "Logout error: " +
+                        error.message;
+
+                    return;
+                }
+
+
+                authMessage.textContent =
+                    "";
+
+                signInPassword.value =
+                    "";
+
+
+                await updatePage();
+            }
+        );
+
+
+        // =========================================================
+        // DELETE ACCOUNT
+        // =========================================================
+
+        deleteAccountBtn.addEventListener(
+            "click",
+            async () => {
+
+                deleteAccountResult.textContent =
+                    "";
+
+
+                // -----------------------------------------------------
+                // Confirmation #1:
+                // ordinary browser warning.
+                // -----------------------------------------------------
+
+                const confirmed =
+                    window.confirm(
+                        "Permanently delete your SJW account?\n\n" +
+                        "This will delete your profile, Credits, and linked account data.\n\n" +
+                        "This action cannot be undone."
+                    );
+
+
+                if (!confirmed) {
+                    return;
+                }
+
+
+                // -----------------------------------------------------
+                // Confirmation #2:
+                // require deliberate typing rather than allowing one
+                // accidental click to destroy an account.
+                // -----------------------------------------------------
+
+                const typedConfirmation =
+                    window.prompt(
+                        "Type DELETE to permanently delete your account."
+                    );
+
+
+                if (
+                    typedConfirmation !==
+                    "DELETE"
+                ) {
+
+                    deleteAccountResult.textContent =
+                        "Account deletion cancelled.";
+
+                    return;
+                }
+
+
+                deleteAccountBtn.disabled =
+                    true;
+
+
+                deleteAccountResult.textContent =
+                    "Deleting account...";
+
+
+                // -----------------------------------------------------
+                // The browser has no delete-user authority itself.
+                //
+                // It asks our authenticated Edge Function to delete the
+                // currently logged-in caller.
+                // -----------------------------------------------------
+
+                const { data, error } =
+                    await supabaseClient.functions.invoke(
+                        "delete-my-account",
+                        {
+                            body: {}
+                        }
+                    );
+
+
+                if (error) {
+
+                    deleteAccountResult.textContent =
+                        "Unable to delete account: " +
+                        error.message;
+
+                    deleteAccountBtn.disabled =
+                        false;
+
+                    return;
+                }
+
+
+                if (!data?.success) {
+
+                    deleteAccountResult.textContent =
+                        "Account deletion did not complete.";
+
+                    deleteAccountBtn.disabled =
+                        false;
+
+                    return;
+                }
+
+
+                // -----------------------------------------------------
+                // Supabase Auth user deletion removes the server-side
+                // account and sessions, but access-token JWTs are
+                // stateless and may technically remain valid until their
+                // expiration time.
+                //
+                // Explicitly clear this browser's persisted session too.
+                // -----------------------------------------------------
+
+                await supabaseClient.auth.signOut({
+                    scope: "local"
+                });
+
+
+                // Re-render the logged-out page after clearing the
+                // browser's local session, then show the final result.
+
+                await updatePage();
+
+                status.textContent =
+                    "Account deleted.";
+
+                oauthMessage.textContent =
+                    "";
+
+                authMessage.textContent =
+                    "Your SJW account has been permanently deleted.";
+
+                deleteAccountBtn.disabled =
+                    false;
+
+                deleteAccountResult.textContent =
+                    "";
+            }
+        );
+
+
+        // =====================================================
+        // AUTH EVENTS
+        // =====================================================
+
         supabaseClient.auth.onAuthStateChange(
             () => {
                 updatePage();
@@ -416,6 +1833,7 @@
         );
 
 
+        handleOAuthCallbackError();
         updatePage();
 
     </script>
