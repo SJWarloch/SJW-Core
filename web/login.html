@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Sign in to or create a Subversive Joy Works account.">
+    <title>Sign in · Subversive Joy Works</title>
+    <link rel="stylesheet" href="/css/main.css">
+</head>
+<body>
+
+    <header class="site-header">
+        <div class="site-header__inner">
+            <a class="brand" href="/" aria-label="Subversive Joy Works home">
+                <img class="brand__mark" src="/assets/sjw-logo.png" alt="">
+                <span class="brand__name">Subversive Joy Works</span>
+            </a>
+            <nav class="site-nav" aria-label="Primary navigation">
+                <a href="/#products">Games &amp; Apps</a>
+                <a id="accountNavLink" class="button button--secondary button--small" href="/login.html">Sign in</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="page-main page-main--narrow">
+        <div class="shell shell--narrow">
+            <div class="page-heading">
+                <p class="eyebrow">SJW Accounts</p>
+                <h1>Sign in or create an account</h1>
+                <p>Link to one core identity across all SJW games and apps and earn Credits.</p>
+            </div>
+
+            <div id="pageMessage" class="status-message" hidden aria-live="polite"></div>
+
+            <div class="auth-grid">
+                <section class="panel">
+                    <div class="panel__heading">
+                        <h2>Sign in</h2>
+                        <p>Use your SJW email/password or a linked Google account.</p>
+                    </div>
+
+                    <div class="form-stack">
+                        <label class="field">
+                            <span>Email</span>
+                            <input id="signInEmail" type="email" autocomplete="email" placeholder="you@example.com">
+                        </label>
+
+                        <label class="field">
+                            <span>Password</span>
+                            <input id="signInPassword" type="password" autocomplete="current-password">
+                        </label>
+
+                        <div class="button-row">
+                            <button id="emailLoginBtn" class="button button--primary" type="button">Sign in</button>
+                            <button id="forgotPasswordBtn" class="button button--text" type="button">Forgot password?</button>
+                        </div>
+                    </div>
+
+                    <div class="divider"><span>or</span></div>
+
+                    <button id="googleLoginBtn" class="button button--google button--full" type="button">
+                        Continue with Google
+                    </button>
+                </section>
+
+                <section class="panel">
+                    <div class="panel__heading">
+                        <h2>Create account</h2>
+                        <p>Email confirmation is required before the new account can sign in.</p>
+                    </div>
+
+                    <div class="form-stack">
+                        <label class="field">
+                            <span>Email</span>
+                            <input id="signUpEmail" type="email" autocomplete="email" placeholder="you@example.com">
+                        </label>
+
+                        <label class="field">
+                            <span>Password</span>
+                            <input id="signUpPassword" type="password" minlength="8" autocomplete="new-password">
+                            <small>Minimum 8 characters.</small>
+                        </label>
+
+                        <label class="field">
+                            <span>Confirm password</span>
+                            <input id="signUpPasswordConfirm" type="password" minlength="8" autocomplete="new-password">
+                        </label>
+
+                        <button id="emailSignUpBtn" class="button button--secondary button--full" type="button">
+                            Create account with email
+                        </button>
+                    </div>
+                </section>
+            </div>
+        </div>
+    </main>
+
+    <footer class="site-footer">
+        <div class="shell site-footer__inner">
+            <a href="/">← Return Home</a>
+            <span class="muted">© 2026 Subversive Joy Works</span>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script type="module" src="/js/site-header.js"></script>
+    <script type="module" src="/js/login.js"></script>
+</body>
+</html>

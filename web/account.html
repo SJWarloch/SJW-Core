@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Manage your Subversive Joy Works account, authentication methods, and Credits.">
+    <title>Account · Subversive Joy Works</title>
+    <link rel="stylesheet" href="/css/main.css">
+</head>
+<body>
+
+    <header class="site-header">
+        <div class="site-header__inner">
+            <a class="brand" href="/" aria-label="Subversive Joy Works home">
+                <img class="brand__mark" src="/assets/sjw-logo.png" alt="">
+                <span class="brand__name">Subversive Joy Works</span>
+            </a>
+            <nav class="site-nav" aria-label="Primary navigation">
+                <a href="/#products">Games &amp; Apps</a>
+                <a id="accountNavLink" class="button button--secondary button--small" href="/account.html">Account</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="page-main">
+        <div class="shell">
+            <div class="page-heading page-heading--split">
+                <div>
+                    <p class="eyebrow">SJW Accounts</p>
+                    <h1>Account &amp; settings</h1>
+                    <p id="status">Loading your account…</p>
+                </div>
+                <div class="credit-badge" aria-live="polite">
+                    <span>Credits</span>
+                    <strong id="credits">—</strong>
+                </div>
+            </div>
+
+            <div id="oauthMessage" class="status-message" hidden aria-live="polite"></div>
+            <div id="accountMessage" class="status-message" hidden aria-live="polite"></div>
+
+            <div id="accountContent" class="settings-layout" hidden>
+                <aside class="settings-nav" aria-label="Account sections">
+                    <a href="#profile">Profile</a>
+                    <a href="#security">Login &amp; security</a>
+                    <a href="#danger">Danger zone</a>
+                    <button id="logoutBtn" class="button button--ghost button--full" type="button">Sign out</button>
+                </aside>
+
+                <div class="settings-content">
+                    <section id="profile" class="panel settings-section">
+                        <div class="panel__heading">
+                            <p class="eyebrow">Profile</p>
+                            <h2>Your SJW identity</h2>
+                            <p>Your core username that all SJW games and apps link back to.</p>
+                        </div>
+
+                        <div class="detail-row">
+                            <span>Current username</span>
+                            <strong id="currentUsername">(none)</strong>
+                        </div>
+
+                        <div class="form-stack form-stack--compact">
+                            <label class="field">
+                                <span>Choose or change username</span>
+                                <input id="usernameInput" type="text" maxlength="32" placeholder="3–32 letters, numbers, or underscores">
+                            </label>
+                            <div class="button-row">
+                                <button id="saveUsernameBtn" class="button button--secondary" type="button">Save username</button>
+                            </div>
+                            <div id="usernameResult" class="inline-message" aria-live="polite"></div>
+                        </div>
+                    </section>
+
+                    <section id="security" class="panel settings-section">
+                        <div class="panel__heading">
+                            <p class="eyebrow">Login &amp; security</p>
+                            <h2>Authentication methods</h2>
+                            <p>Multiple login methods can point to the same SJW account.</p>
+                        </div>
+
+                        <div class="detail-list">
+                            <div class="detail-row">
+                                <span>Account email</span>
+                                <strong id="accountEmail">—</strong>
+                            </div>
+                            <div class="detail-row">
+                                <span>Email/password</span>
+                                <strong id="emailPasswordStatus">Checking…</strong>
+                            </div>
+                            <div class="detail-row">
+                                <span>Google</span>
+                                <strong id="googleStatus">Checking…</strong>
+                            </div>
+                        </div>
+
+                        <div class="settings-subsection">
+                            <h3 id="passwordHeading">Set or change password</h3>
+                            <div class="form-grid form-grid--two">
+                                <label class="field">
+                                    <span>New password</span>
+                                    <input id="accountPassword" type="password" minlength="8" autocomplete="new-password">
+                                </label>
+                                <label class="field">
+                                    <span>Confirm new password</span>
+                                    <input id="accountPasswordConfirm" type="password" minlength="8" autocomplete="new-password">
+                                </label>
+                            </div>
+                            <div class="button-row">
+                                <button id="setPasswordBtn" class="button button--secondary" type="button">Set password</button>
+                            </div>
+                            <div id="passwordResult" class="inline-message" aria-live="polite"></div>
+                        </div>
+
+                        <div class="settings-subsection">
+                            <h3>Google account</h3>
+                            <p class="muted">Only one Google account may be linked to an SJW account.</p>
+                            <div class="button-row">
+                                <button id="linkGoogleBtn" class="button button--google" type="button" hidden>Link Google account</button>
+                                <button id="unlinkGoogleBtn" class="button button--secondary" type="button" hidden>Unlink Google account</button>
+                            </div>
+                            <div id="identityResult" class="inline-message" aria-live="polite"></div>
+                        </div>
+                    </section>
+
+                    <section id="danger" class="panel panel--danger settings-section">
+                        <div class="panel__heading">
+                            <p class="eyebrow eyebrow--danger">Danger zone</p>
+                            <h2>Delete account</h2>
+                            <p>
+                                Account deletion is permanent in the current build. We are about to redesign this
+                                so economic history and ownership can survive deletion and later restoration.
+                            </p>
+                        </div>
+                        <button id="deleteAccountBtn" class="button button--danger" type="button">Delete account</button>
+                        <div id="deleteAccountResult" class="inline-message" aria-live="polite"></div>
+                    </section>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="site-footer">
+        <div class="shell site-footer__inner">
+            <a href="/">← Return Home</a>
+            <span class="muted">© 2026 Subversive Joy Works</span>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script type="module" src="/js/site-header.js"></script>
+    <script type="module" src="/js/account.js"></script>
+</body>
+</html>
